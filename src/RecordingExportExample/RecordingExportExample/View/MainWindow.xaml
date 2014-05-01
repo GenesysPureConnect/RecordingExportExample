@@ -1,0 +1,226 @@
+﻿<Window x:Class="ININ.Alliances.RecordingExportExample.View.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModel="clr-namespace:ININ.Alliances.RecordingExportExample.ViewModel"
+        xmlns:supporting="clr-namespace:ININ.Alliances.RecordingExportExample.View.Supporting"
+        mc:Ignorable="d" Title="Recording Export Example" Height="499" Width="940" Closing="MainWindow_OnClosing"
+        d:DataContext="{d:DesignInstance viewModel:MainViewModel}" Icon="/RecordingExportExample;component/General.ico">
+    <Window.Resources>
+        <Style TargetType="TextBox">
+            <Setter Property="Margin" Value="2" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Height" Value="22" />
+        </Style>
+        <Style TargetType="TextBlock">
+            <Setter Property="Margin" Value="2" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="2" />
+        </Style>
+        <Style TargetType="TextBlock" x:Key="AuthLabels" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="Width" Value="60" />
+            <Setter Property="DockPanel.Dock" Value="Left" />
+        </Style>
+        <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}" x:Key="AuthBoxStyle">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsConnectionInProgress}" Value="True">
+                    <Setter Property="IsEnabled" Value="False" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsConnected}" Value="True">
+                    <Setter Property="IsEnabled" Value="False" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="PasswordBox" x:Key="AuthPwBoxStyle">
+            <Setter Property="Margin" Value="2" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Height" Value="22" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsConnectionInProgress}" Value="True">
+                    <Setter Property="IsEnabled" Value="False" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsConnected}" Value="True">
+                    <Setter Property="IsEnabled" Value="False" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="Border" x:Key="SectionHeaderBorderStyle">
+            <Setter Property="Margin" Value="0,3" />
+            <Setter Property="BorderBrush" Value="DarkGray" />
+            <Setter Property="BorderThickness" Value="0,0,0,1" />
+        </Style>
+        <Style TargetType="TextBlock" x:Key="SectionHeaderTextStyle">
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Margin" Value="0,1" />
+        </Style>
+        <Style TargetType="CheckBox" x:Key="MediaTypeOptionStyle">
+            <Setter Property="Margin" Value="2,1" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style TargetType="TextBlock" x:Key="FileFormatOptionStyle">
+            <Setter Property="Foreground" Value="Gray" />
+            <Setter Property="Margin" Value="3,1" />
+        </Style>
+        <Style TargetType="Button" x:Key="ConnectButtonStyle">
+            <Setter Property="Height" Value="22" />
+            <Setter Property="Margin" Value="4" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsConnectionInProgress}" Value="True">
+                    <Setter Property="IsEnabled" Value="False" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="DockPanel" x:Key="ExportOperationStyle">
+            <Setter Property="IsEnabled" Value="False" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.IsConnected}" Value="True">
+                    <Setter Property="IsEnabled" Value="True" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="Button" x:Key="ExportButtonStyle">
+            <Setter Property="Height" Value="22" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Setter Property="Padding" Value="8,2" />
+            <Setter Property="Margin" Value="2,6" />
+        </Style>
+        <Style TargetType="TextBox" x:Key="LogStyle">
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="IsReadOnly" Value="True" />
+            <Setter Property="Background" Value="#09000000"></Setter>
+        </Style>
+
+        <supporting:CommandBindingCollectionConverter x:Key="RegisterCommandBindingsConverter" />
+    </Window.Resources>
+
+    <Grid>
+        <supporting:CommandBindingHelpers.RegisterCommandBindings>
+            <MultiBinding Converter="{StaticResource RegisterCommandBindingsConverter}">
+                <Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=Window}" Path="DataContext.CommandBindings" />
+            </MultiBinding>
+        </supporting:CommandBindingHelpers.RegisterCommandBindings>
+        <DockPanel>
+            <StackPanel Orientation="Vertical" DockPanel.Dock="Left" Width="240">
+                <GroupBox>
+                    <GroupBox.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{Binding CicConnectionStateImage}" Width="16" Height="16">
+                                <Image.ToolTip>
+                                    <TextBlock MaxWidth="200" TextWrapping="Wrap" Text="{Binding ConnectionStateString}" />
+                                </Image.ToolTip>
+                            </Image>
+                            <TextBlock>CIC Authentication</TextBlock>
+                        </StackPanel>
+                    </GroupBox.Header>
+                    <StackPanel Orientation="Vertical">
+                        <DockPanel>
+                            <TextBlock Style="{StaticResource AuthLabels}">Username</TextBlock>
+                            <TextBox Style="{StaticResource AuthBoxStyle}" Text="{Binding Path=CicUsername, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                        <DockPanel>
+                            <TextBlock Style="{StaticResource AuthLabels}">Password</TextBlock>
+                            <PasswordBox Style="{StaticResource AuthPwBoxStyle}" Name="CicPasswordBox" PasswordChanged="CicPasswordBox_OnPasswordChanged" />
+                        </DockPanel>
+                        <DockPanel>
+                            <TextBlock Style="{StaticResource AuthLabels}">Server</TextBlock>
+                            <TextBox Style="{StaticResource AuthBoxStyle}" Text="{Binding Path=CicServer, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox Header="Database Authentication">
+                    <StackPanel Orientation="Vertical">
+                        <DockPanel>
+                            <TextBlock Style="{StaticResource AuthLabels}">Username</TextBlock>
+                            <TextBox Style="{StaticResource AuthBoxStyle}" Text="{Binding Path=DbUsername, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                        <DockPanel>
+                            <TextBlock Style="{StaticResource AuthLabels}">Password</TextBlock>
+                            <PasswordBox Style="{StaticResource AuthPwBoxStyle}" Name="DbPasswordBox" PasswordChanged="DbPasswordBox_OnPasswordChanged" />
+                        </DockPanel>
+                        <DockPanel>
+                            <TextBlock Style="{StaticResource AuthLabels}">Server</TextBlock>
+                            <TextBox Style="{StaticResource AuthBoxStyle}" Text="{Binding Path=DbServer, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                        <DockPanel>
+                            <TextBlock Style="{StaticResource AuthLabels}" ToolTip="Leave blank for default instance">DB Name</TextBlock>
+                            <TextBox Style="{StaticResource AuthBoxStyle}" Text="{Binding Path=DbName, UpdateSourceTrigger=PropertyChanged}" ToolTip="Leave blank for default instance" />
+                        </DockPanel>
+                    </StackPanel>
+                </GroupBox>
+
+                <Button Command="viewModel:UiCommands.LogInCommand" Content="{Binding ConnectButtonText}" Style="{StaticResource ConnectButtonStyle}" />
+            </StackPanel>
+
+            <GroupBox Header="Export Operations" DataContext="{Binding Path=ExportViewModel}">
+                <DockPanel>
+                    <supporting:CommandBindingHelpers.RegisterCommandBindings>
+                        <MultiBinding Converter="{StaticResource RegisterCommandBindingsConverter}">
+                            <Binding Path="CommandBindings" />
+                        </MultiBinding>
+                    </supporting:CommandBindingHelpers.RegisterCommandBindings>
+                    <DockPanel DockPanel.Dock="Top" Style="{StaticResource ExportOperationStyle}">
+                        <Border Style="{StaticResource SectionHeaderBorderStyle}" DockPanel.Dock="Top">
+                            <TextBlock Style="{StaticResource SectionHeaderTextStyle}">Record Filter Criteria</TextBlock>
+                        </Border>
+                        <Grid DockPanel.Dock="Top">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <DockPanel Grid.Column="0" Margin="0,0,3,0">
+                                <TextBlock Style="{StaticResource AuthLabels}">Start Date:</TextBlock>
+                                <DatePicker SelectedDate="{Binding Path=StartDate}" />
+                            </DockPanel>
+                            <DockPanel Grid.Column="1" Margin="3,0,0,0">
+                                <TextBlock Style="{StaticResource AuthLabels}">End Date:</TextBlock>
+                                <DatePicker SelectedDate="{Binding Path=EndDate}" />
+                            </DockPanel>
+                        </Grid>
+                        <StackPanel Orientation="Horizontal" Margin="0,2" DockPanel.Dock="Top">
+                            <TextBlock>Media Types:</TextBlock>
+                            <CheckBox Style="{StaticResource MediaTypeOptionStyle}" IsChecked="{Binding Path=MediaCalls}">Calls</CheckBox>
+                            <CheckBox Style="{StaticResource MediaTypeOptionStyle}" IsChecked="{Binding Path=MediaChats}">Chats</CheckBox>
+                            <CheckBox Style="{StaticResource MediaTypeOptionStyle}" IsChecked="{Binding Path=MediaEmails}">Emails</CheckBox>
+                        </StackPanel>
+
+                        <Border Style="{StaticResource SectionHeaderBorderStyle}" DockPanel.Dock="Top">
+                            <TextBlock Style="{StaticResource SectionHeaderTextStyle}">Export settings</TextBlock>
+                        </Border>
+                        <DockPanel DockPanel.Dock="Top">
+                            <TextBlock DockPanel.Dock="Left">Export Directory</TextBlock>
+                            <Button DockPanel.Dock="Right" Width="20" Height="22">...</Button>
+                            <TextBox Text="{Binding Path=ExportDirectory, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                        <DockPanel DockPanel.Dock="Top" LastChildFill="False">
+                            <CheckBox DockPanel.Dock="Left" VerticalAlignment="top" Margin="10,3"
+                                      IsChecked="{Binding Path=ExportUseOriginalFileNames}">Use original file names</CheckBox>
+                            <Button Style="{StaticResource ExportButtonStyle}" DockPanel.Dock="Right" Command="viewModel:UiCommands.ExportTestCommand">Test Filter</Button>
+                            <Button Style="{StaticResource ExportButtonStyle}" DockPanel.Dock="Right" Command="viewModel:UiCommands.ExportCommand">Export</Button>
+                        </DockPanel>
+                    </DockPanel>
+                    <Grid DockPanel.Dock="Bottom" Height="22">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding HasProgress}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+                        <ProgressBar Minimum="{Binding ProgressMinimum}" Maximum="{Binding ProgressMaximum}" Value="{Binding ProgressValue}" />
+                        <TextBlock Text="{Binding ProgressText}" />
+                    </Grid>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <TextBox Text="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Log}"
+                               Style="{StaticResource LogStyle}" BorderThickness="0" />
+                    </ScrollViewer>
+                </DockPanel>
+            </GroupBox>
+        </DockPanel>
+    </Grid>
+</Window>
