@@ -58,7 +58,7 @@ namespace ININ.Alliances.RecordingExportExample.ViewModel
             get { return _cicPassword; }
             set
             {
-                _cicPassword = value;
+                _cicPassword = value ?? new SecureString();
                 // Seal the password value
                 if (!_cicPassword.IsReadOnly()) _cicPassword.MakeReadOnly();
                 OnPropertyChanged();
@@ -366,7 +366,7 @@ namespace ININ.Alliances.RecordingExportExample.ViewModel
             try
             {
                 // Disconnect and clean up
-                if (_session.ConnectionState != ConnectionState.Up) _session.Disconnect();
+                if (_session.ConnectionState == ConnectionState.Up) _session.Disconnect();
             }
             catch (Exception ex)
             {
