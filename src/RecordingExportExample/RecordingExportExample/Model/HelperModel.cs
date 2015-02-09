@@ -128,7 +128,7 @@ namespace ININ.Alliances.RecordingExportExample.Model
             {
                 Console.WriteLine("Data was not decrypted. An error occurred.");
                 Console.WriteLine(e.ToString());
-                return null;
+                return new SecureString();
             }
         }
 
